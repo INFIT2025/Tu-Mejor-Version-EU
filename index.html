@@ -224,6 +224,10 @@
                 <span class="text-3xl font-bold text-infit-gold">$<span id="display-price-nutri">59</span></span>
                 <span class="text-sm text-gray-500 uppercase">USD / Mes</span>
             </div>
+            <!-- Botón Ver Video -->
+            <button onclick="playVideo('nutri')" class="w-full mb-4 py-2 bg-gray-800/50 hover:bg-gray-700 rounded text-xs text-infit-gold border border-gray-700 hover:border-infit-gold transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-play-circle text-sm"></i> Ver Preview
+            </button>
             <ul class="space-y-3 text-sm text-gray-400 mb-8">
                 <li class="flex items-start gap-2"><i class="fas fa-check text-infit-gold mt-1"></i> Plan 100% personalizado</li>
                 <li class="flex items-start gap-2"><i class="fas fa-check text-infit-gold mt-1"></i> Eliminación alimentos dañinos</li>
@@ -252,13 +256,19 @@
                 <span class="text-sm text-infit-gold font-bold">USD / Mes</span>
             </div>
             <ul class="space-y-4 text-sm text-gray-300 mb-8">
-                <li class="flex items-start gap-3">
-                    <div class="bg-infit-gold/20 p-1 rounded text-infit-gold"><i class="fas fa-dumbbell"></i></div>
-                    <span class="font-bold text-white">Entrenamiento Digital</span>
+                <li class="flex flex-col gap-1">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-infit-gold/20 p-1 rounded text-infit-gold"><i class="fas fa-dumbbell"></i></div>
+                        <span class="font-bold text-white">Entrenamiento Digital</span>
+                    </div>
+                    <button onclick="playVideo('entreno')" class="ml-9 text-[10px] text-infit-gold/70 hover:text-infit-gold underline text-left w-fit"><i class="fas fa-play text-[8px] mr-1"></i>Ver preview entrenamiento</button>
                 </li>
-                <li class="flex items-start gap-3">
-                    <div class="bg-infit-gold/20 p-1 rounded text-infit-gold"><i class="fas fa-utensils"></i></div>
-                    <span class="font-bold text-white">Plan Nutricional Completo</span>
+                <li class="flex flex-col gap-1">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-infit-gold/20 p-1 rounded text-infit-gold"><i class="fas fa-utensils"></i></div>
+                        <span class="font-bold text-white">Plan Nutricional Completo</span>
+                    </div>
+                    <button onclick="playVideo('nutri')" class="ml-9 text-[10px] text-infit-gold/70 hover:text-infit-gold underline text-left w-fit"><i class="fas fa-play text-[8px] mr-1"></i>Ver preview nutrición</button>
                 </li>
                 <li class="flex items-start gap-3">
                     <div class="bg-infit-gold/20 p-1 rounded text-infit-gold"><i class="fas fa-calendar-check"></i></div>
@@ -283,6 +293,10 @@
                 <span class="text-3xl font-bold text-infit-gold">$<span id="display-price-train">59</span></span>
                 <span class="text-sm text-gray-500 uppercase">USD / Mes</span>
             </div>
+            <!-- Botón Ver Video -->
+            <button onclick="playVideo('entreno')" class="w-full mb-4 py-2 bg-gray-800/50 hover:bg-gray-700 rounded text-xs text-infit-gold border border-gray-700 hover:border-infit-gold transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-play-circle text-sm"></i> Ver Preview
+            </button>
             <ul class="space-y-3 text-sm text-gray-400 mb-8">
                 <li class="flex items-start gap-2"><i class="fas fa-check text-infit-gold mt-1"></i> Rutinas Gym o Casa</li>
                 <li class="flex items-start gap-2"><i class="fas fa-check text-infit-gold mt-1"></i> Videos demostrativos</li>
@@ -306,7 +320,7 @@
         </div>
     </div>
 
-    <!-- Modal Formulario -->
+    <!-- Modal Formulario (Pedido) -->
     <div id="order-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
         <!-- Backdrop -->
         <div class="fixed inset-0 bg-black/90 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
@@ -444,6 +458,28 @@
         </div>
     </div>
 
+    <!-- MODAL DE VIDEO -->
+    <div id="video-modal" class="fixed inset-0 z-[120] hidden bg-black/95 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl bg-black rounded-lg overflow-hidden border border-infit-gold/30 shadow-2xl">
+            <!-- Botón Cerrar -->
+            <button onclick="closeVideo()" class="absolute top-2 right-2 z-10 bg-black/50 text-white hover:text-infit-gold rounded-full w-10 h-10 flex items-center justify-center text-xl backdrop-blur-sm border border-white/20">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="aspect-video w-full">
+                <video id="main-video-player" class="w-full h-full object-contain" controls controlsList="nodownload">
+                    <source src="" type="video/mp4">
+                    Tu navegador no soporta videos HTML5.
+                </video>
+            </div>
+            
+            <div class="p-4 bg-[#121212]">
+                <h4 id="video-title" class="text-infit-gold font-bold uppercase text-lg">Vista Previa</h4>
+                <p class="text-gray-400 text-xs mt-1">Mira un poco de lo que incluye este plan.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Overlay -->
     <div id="success-overlay" class="fixed inset-0 z-[110] hidden bg-black flex flex-col items-center justify-center p-4 text-center">
         <div class="bg-infit-gold/10 p-6 rounded-full mb-6 animate-bounce">
@@ -488,13 +524,13 @@
         let auth;
         // NOTA: Si subes esto a GitHub, asegúrate de reemplazar esta configuración con la tuya real.
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-  apiKey: "AIzaSyAQGBdxeLXvFrhGSgOvDpJbswbeJ3Fi48Y",
-  authDomain: "infit-bienvenida-mx.firebaseapp.com",
-  projectId: "infit-bienvenida-mx",
-  storageBucket: "infit-bienvenida-mx.firebasestorage.app",
-  messagingSenderId: "204458486575",
-  appId: "1:204458486575:web:57a2a7b62053cd33afcfda"
-};
+            apiKey: "AIzaSyAQGBdxeLXvFrhGSgOvDpJbswbeJ3Fi48Y",
+            authDomain: "infit-bienvenida-mx.firebaseapp.com",
+            projectId: "infit-bienvenida-mx",
+            storageBucket: "infit-bienvenida-mx.firebasestorage.app",
+            messagingSenderId: "204458486575",
+            appId: "1:204458486575:web:57a2a7b62053cd33afcfda"
+        };
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'infit-web';
 
@@ -541,6 +577,44 @@
 
             loadConfig();
         });
+
+        // ==========================================
+        //  LOGICA DE VIDEO
+        // ==========================================
+        
+        function playVideo(type) {
+            const modal = document.getElementById('video-modal');
+            const video = document.getElementById('main-video-player');
+            const title = document.getElementById('video-title');
+            
+            // Definir rutas de video (URLs relativas para GitHub)
+            // Usamos encodeURIComponent para manejar espacios en los nombres
+            let src = '';
+            
+            if (type === 'nutri') {
+                src = 'PA%20+%20Eliminacion.mp4';
+                title.textContent = "PREVIEW: Plan de Nutrición";
+            } else if (type === 'entreno') {
+                src = 'PE%20+%20Reto%20Hombres.mp4';
+                title.textContent = "PREVIEW: Entrenamiento Digital";
+            }
+            
+            video.src = src;
+            modal.classList.remove('hidden');
+            
+            // Intentar reproducir automáticamente
+            video.play().catch(e => console.log("Auto-play prevenido por navegador", e));
+        }
+
+        function closeVideo() {
+            const modal = document.getElementById('video-modal');
+            const video = document.getElementById('main-video-player');
+            
+            video.pause();
+            video.currentTime = 0; // Reiniciar video
+            video.src = ""; // Limpiar source para detener descarga de datos
+            modal.classList.add('hidden');
+        }
 
         // Funciones del Editor
         function loadConfig() {
